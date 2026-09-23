@@ -19,25 +19,30 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Evita el scroll principal de la ventana */
+            overflow: hidden;
         }
 
-        /* Header compacto */
+        /* Encabezado Blanco Profesional */
         .navbar-custom {
-            background-color: var(--primary-blue);
-            padding: 8px 20px;
-            color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: #FFFFFF;
+            padding: 10px 24px;
+            border-bottom: 2px solid #E5E9F0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
 
         .logo-img {
-            height: 38px;
-            background-color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
+            height: 44px;
+            object-fit: contain;
         }
 
-        /* Contenedor principal ajustado al alto de la pantalla */
+        .header-title {
+            color: var(--primary-blue);
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Contenedor Principal Ajustado */
         .main-wrapper {
             flex: 1;
             display: flex;
@@ -51,27 +56,24 @@
         .metric-card {
             background: white;
             border-radius: 8px;
-            padding: 6px 15px;
+            padding: 6px 16px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--primary-blue);
+            border-left: 4px solid #DC3545;
         }
 
         .metric-card.disponible {
             border-left-color: #198754;
         }
 
-        /* Tabla con scroll interno ajustado */
+        /* Tabla con scroll interno */
         .table-container {
             flex: 1;
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            overflow-y: auto; /* Solo la tabla tiene scroll si hay muchos datos */
-            max-height: 40vh; /* Controla la altura para dar espacio a los botones */
-        }
-
-        .table {
-            margin-bottom: 0;
+            overflow-y: auto;
+            max-height: 42vh;
+            border: 1px solid #E0E0E0;
         }
 
         .table th {
@@ -80,8 +82,9 @@
             background-color: var(--primary-blue);
             color: white;
             z-index: 1;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             text-transform: uppercase;
+            font-weight: 700;
         }
 
         .table td {
@@ -90,13 +93,13 @@
             padding: 6px 12px;
         }
 
-        /* Formulario compacto */
+        /* Formulario Compacto */
         .form-card {
             background: white;
             border-radius: 8px;
             padding: 12px 18px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid #e0e0e0;
+            border: 1px solid #E0E0E0;
         }
 
         .form-label {
@@ -108,20 +111,17 @@
 
         .form-control, .form-select {
             font-size: 0.85rem;
-            padding: 4px 8px;
+            padding: 5px 10px;
         }
 
-        /* Botones de acción siempre visibles */
-        .action-buttons .btn {
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 6px 14px;
-        }
-
+        /* Botones de Acción Azules y Estilizados */
         .btn-primary-custom {
             background-color: var(--primary-blue);
             color: white;
             border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 6px 14px;
         }
 
         .btn-primary-custom:hover {
@@ -129,20 +129,26 @@
             color: white;
         }
 
-        .badge-ocupado { background-color: #dc3545; }
+        .action-buttons .btn {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+        }
+
+        .badge-ocupado { background-color: #DC3545; }
         .badge-disponible { background-color: #198754; }
     </style>
 </head>
 <body>
 
-    <!-- Encabezado -->
+    <!-- Encabezado Fondo Blanco con Título Azul -->
     <nav class="navbar-custom d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-3">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo PROINTEC" class="logo-img" onerror="this.style.display='none'">
-            <h5 class="m-0 fw-bold tracking-wide">SISTEMA DE CONTROL Y ASIGNACIÓN DE ID BIOMÉTRICO</h5>
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="PROINTEC" class="logo-img" onerror="this.style.display='none'">
+            <span class="header-title">SISTEMA DE CONTROL Y ASIGNACIÓN DE ID BIOMÉTRICO</span>
         </div>
         <div class="d-flex align-items-center">
-            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 Buscar colaborador..." style="width: 230px;" onkeyup="filtrarTabla()">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 Buscar colaborador..." style="width: 240px;" onkeyup="filtrarTabla()">
         </div>
     </nav>
 
@@ -161,7 +167,7 @@
             </div>
         </div>
 
-        <!-- Tabla de Datos -->
+        <!-- Tabla de Datos con Renderizado de Registros -->
         <div class="table-container">
             <table class="table table-hover align-middle mb-0" id="tablaIDs">
                 <thead>
@@ -174,7 +180,21 @@
                     </tr>
                 </thead>
                 <tbody id="tablaCuerpo">
-                    <!-- Registros renderizados por JS o Flask -->
+                    {% for r in registros %}
+                    <tr onclick="seleccionarFila(this)" style="cursor: pointer;">
+                        <td class="text-center fw-bold">{{ r.id }}</td>
+                        <td>{{ r.nombre }}</td>
+                        <td>{{ r.apellido }}</td>
+                        <td class="text-center">
+                            {% if r.estado == 'Ocupado' %}
+                                <span class="badge badge-ocupado px-2 py-1">Ocupado</span>
+                            {% else %}
+                                <span class="badge badge-disponible px-2 py-1">Disponible</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ r.observaciones }}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -182,39 +202,39 @@
         <!-- Formulario de Entrada y Botones -->
         <div class="form-card">
             <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.9rem;">Detalle del Colaborador</h6>
-            <form id="idForm" class="row g-2 align-items-end">
+            <form id="idForm" class="row g-2 align-items-end" method="POST">
                 <div class="col-md-2">
                     <label class="form-label">ID Biométrico</label>
-                    <input type="text" id="inputID" class="form-control" required>
+                    <input type="text" name="id" id="inputID" class="form-control" required>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Nombre</label>
-                    <input type="text" id="inputNombre" class="form-control">
+                    <input type="text" name="nombre" id="inputNombre" class="form-control">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Apellido</label>
-                    <input type="text" id="inputApellido" class="form-control">
+                    <input type="text" name="apellido" id="inputApellido" class="form-control">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Estado</label>
-                    <select id="inputEstado" class="form-select">
+                    <select name="estado" id="inputEstado" class="form-select">
                         <option value="Disponible">Disponible</option>
                         <option value="Ocupado">Ocupado</option>
                     </select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Observaciones</label>
-                    <input type="text" id="inputObservaciones" class="form-control">
+                    <input type="text" name="observaciones" id="inputObservaciones" class="form-control">
                 </div>
             </form>
 
-            <!-- Barra de Botones visible siempre al pie -->
+            <!-- Barra de Botones -->
             <div class="action-buttons d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-primary-custom" onclick="agregarRegistro()"><i class="bi bi-plus-lg"></i> Agregar</button>
-                    <button type="button" class="btn btn-primary-custom" onclick="editarRegistro()"><i class="bi bi-pencil"></i> Editar</button>
-                    <button type="button" class="btn btn-warning text-white" onclick="liberarID()"><i class="bi bi-unlock"></i> Liberar ID</button>
-                    <button type="button" class="btn btn-danger" onclick="eliminarRegistro()"><i class="bi bi-trash"></i> Eliminar</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="ejecutarAccion('agregar')"><i class="bi bi-plus-lg"></i> Agregar</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="ejecutarAccion('editar')"><i class="bi bi-pencil"></i> Editar</button>
+                    <button type="button" class="btn btn-warning text-white" onclick="ejecutarAccion('liberar')"><i class="bi bi-unlock"></i> Liberar ID</button>
+                    <button type="button" class="btn btn-danger" onclick="ejecutarAccion('eliminar')"><i class="bi bi-trash"></i> Eliminar</button>
                     <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()"><i class="bi bi-eraser"></i> Limpiar</button>
                 </div>
                 <small class="text-muted text-end" style="font-size: 0.75rem;">Guardado automático activado</small>
@@ -223,5 +243,58 @@
 
     </div>
 
+    <!-- Scripts para Búsqueda, Métricas y Selección -->
+    <script>
+        function actualizarMetricas() {
+            let filas = document.querySelectorAll("#tablaCuerpo tr");
+            let ocupados = 0;
+            let disponibles = 0;
+
+            filas.forEach(fila => {
+                let estado = fila.children[3].innerText.trim();
+                if (estado === "Ocupado") ocupados++;
+                if (estado === "Disponible") disponibles++;
+            });
+
+            document.getElementById("totalOcupados").innerText = ocupados;
+            document.getElementById("totalDisponibles").innerText = disponibles;
+        }
+
+        function seleccionarFila(fila) {
+            let c = fila.children;
+            document.getElementById("inputID").value = c[0].innerText.trim();
+            document.getElementById("inputNombre").value = c[1].innerText.trim();
+            document.getElementById("inputApellido").value = c[2].innerText.trim();
+            document.getElementById("inputEstado").value = c[3].innerText.trim();
+            document.getElementById("inputObservaciones").value = c[4].innerText.trim();
+        }
+
+        function limpiarFormulario() {
+            document.getElementById("idForm").reset();
+            document.getElementById("inputEstado").value = "Disponible";
+        }
+
+        function filtrarTabla() {
+            let filtro = document.getElementById("searchInput").value.toLowerCase();
+            let filas = document.querySelectorAll("#tablaCuerpo tr");
+
+            filas.forEach(fila => {
+                let texto = fila.innerText.toLowerCase();
+                fila.style.display = texto.includes(filtro) ? "" : "none";
+            });
+        }
+
+        function ejecutarAccion(accion) {
+            let form = document.getElementById("idForm");
+            let actionInput = document.createElement("input");
+            actionInput.type = "hidden";
+            actionInput.name = "accion";
+            actionInput.value = accion;
+            form.appendChild(actionInput);
+            form.submit();
+        }
+
+        window.onload = actualizarMetricas;
+    </script>
 </body>
 </html>
