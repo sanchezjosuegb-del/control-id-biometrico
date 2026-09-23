@@ -3,226 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control ID Biométrico - PROINTEC GUATEMALA S.A.</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Control de ID - PROINTEC GUATEMALA S.A.</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        body { background-color: #F4F6F9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .bg-primary-custom { background-color: #0055B8; }
-        .text-primary-custom { color: #0055B8; }
-        .card-stat { border-radius: 8px; border: 1px solid #D1D5DB; }
-        .table-container { background: #FFFFFF; border-radius: 8px; border: 1px solid #D1D5DB; }
+        :root {
+            --primary-blue: #0055B8;
+            --dark-blue: #0B2545;
+            --bg-gray: #F4F6F9;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Evita el scroll principal de la ventana */
+        }
+
+        /* Header compacto */
+        .navbar-custom {
+            background-color: var(--primary-blue);
+            padding: 8px 20px;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-img {
+            height: 38px;
+            background-color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        /* Contenedor principal ajustado al alto de la pantalla */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 20px;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        /* Tarjetas de Métricas */
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 6px 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .metric-card.disponible {
+            border-left-color: #198754;
+        }
+
+        /* Tabla con scroll interno ajustado */
+        .table-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow-y: auto; /* Solo la tabla tiene scroll si hay muchos datos */
+            max-height: 40vh; /* Controla la altura para dar espacio a los botones */
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--primary-blue);
+            color: white;
+            z-index: 1;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .table td {
+            font-size: 0.88rem;
+            vertical-align: middle;
+            padding: 6px 12px;
+        }
+
+        /* Formulario compacto */
+        .form-card {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .form-control, .form-select {
+            font-size: 0.85rem;
+            padding: 4px 8px;
+        }
+
+        /* Botones de acción siempre visibles */
+        .action-buttons .btn {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--dark-blue);
+            color: white;
+        }
+
+        .badge-ocupado { background-color: #dc3545; }
+        .badge-disponible { background-color: #198754; }
     </style>
 </head>
 <body>
 
-    <!-- Encabezado Blanco con Logo -->
-    <header class="bg-white border-bottom py-2 px-3 mb-3 shadow-sm">
-        <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div class="d-flex align-items-center gap-3">
-               <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo PROINTEC" style="height: 50px;">
-                <h5 class="m-0 fw-bold text-primary-custom">SISTEMA DE CONTROL Y ASIGNACIÓN DE ID BIOMÉTRICO</h5>
-            </div>
-            <div class="d-flex align-items-center">
-                <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 Buscar colaborador..." onkeyup="filtrarTabla()">
-            </div>
+    <!-- Encabezado -->
+    <nav class="navbar-custom d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo PROINTEC" class="logo-img" onerror="this.style.display='none'">
+            <h5 class="m-0 fw-bold tracking-wide">SISTEMA DE CONTROL Y ASIGNACIÓN DE ID BIOMÉTRICO</h5>
         </div>
-    </header>
+        <div class="d-flex align-items-center">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 Buscar colaborador..." style="width: 230px;" onkeyup="filtrarTabla()">
+        </div>
+    </nav>
 
-    <div class="container-fluid px-3">
-        <!-- Tarjetas Estadísticas -->
-        <div class="row g-2 mb-3">
-            <div class="col-6 col-md-3">
-                <div class="card card-stat p-2 bg-white">
-                    <span class="small fw-bold text-danger">IDs OCUPADOS</span>
-                    <h4 class="m-0 fw-bold text-dark" id="countOcupados">0</h4>
-                </div>
+    <!-- Contenido Principal -->
+    <div class="main-wrapper">
+        
+        <!-- Tarjetas Resumen -->
+        <div class="d-flex gap-3">
+            <div class="metric-card">
+                <small class="text-danger fw-bold text-uppercase d-block" style="font-size: 0.7rem;">IDs Ocupados</small>
+                <span class="fs-5 fw-bold" id="totalOcupados">0</span>
             </div>
-            <div class="col-6 col-md-3">
-                <div class="card card-stat p-2 bg-white">
-                    <span class="small fw-bold text-success">IDs DISPONIBLES</span>
-                    <h4 class="m-0 fw-bold text-dark" id="countDisponibles">0</h4>
-                </div>
+            <div class="metric-card disponible">
+                <small class="text-success fw-bold text-uppercase d-block" style="font-size: 0.7rem;">IDs Disponibles</small>
+                <span class="fs-5 fw-bold" id="totalDisponibles">0</span>
             </div>
         </div>
 
-        <!-- Tabla Registros -->
-        <div class="table-container p-2 mb-3 table-responsive" style="max-height: 380px; overflow-y: auto;">
-            <table class="table table-hover table-striped align-middle m-0" id="tablaIDs">
-                <thead class="bg-primary-custom text-white sticky-top">
+        <!-- Tabla de Datos -->
+        <div class="table-container">
+            <table class="table table-hover align-middle mb-0" id="tablaIDs">
+                <thead>
                     <tr>
-                        <th class="text-center">ID BIOMÉTRICO</th>
-                        <th>NOMBRE</th>
-                        <th>APELLIDO</th>
-                        <th class="text-center">ESTADO</th>
-                        <th>OBSERVACIONES</th>
+                        <th class="text-center" style="width: 120px;">ID Biométrico</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th class="text-center" style="width: 130px;">Estado</th>
+                        <th>Observaciones</th>
                     </tr>
                 </thead>
-                <tbody id="tablaBody">
-                    <!-- Filas dinámicas -->
+                <tbody id="tablaCuerpo">
+                    <!-- Registros renderizados por JS o Flask -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Formulario -->
-        <div class="card p-3 bg-white border mb-3">
-            <h6 class="fw-bold text-primary-custom mb-3">Detalle del Colaborador</h6>
-            <form id="formColaborador" class="row g-2">
-                <div class="col-12 col-md-2">
-                    <label class="form-label small fw-bold text-secondary">ID Biométrico</label>
-                    <input type="text" id="inputId" class="form-control form-control-sm" required>
+        <!-- Formulario de Entrada y Botones -->
+        <div class="form-card">
+            <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.9rem;">Detalle del Colaborador</h6>
+            <form id="idForm" class="row g-2 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label">ID Biométrico</label>
+                    <input type="text" id="inputID" class="form-control" required>
                 </div>
-                <div class="col-12 col-md-3">
-                    <label class="form-label small fw-bold text-secondary">Nombre</label>
-                    <input type="text" id="inputNombre" class="form-control form-control-sm">
+                <div class="col-md-2">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" id="inputNombre" class="form-control">
                 </div>
-                <div class="col-12 col-md-3">
-                    <label class="form-label small fw-bold text-secondary">Apellido</label>
-                    <input type="text" id="inputApellido" class="form-control form-control-sm">
+                <div class="col-md-2">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" id="inputApellido" class="form-control">
                 </div>
-                <div class="col-12 col-md-2">
-                    <label class="form-label small fw-bold text-secondary">Estado</label>
-                    <select id="selectEstado" class="form-select form-select-sm">
-                        <option value="Ocupado">Ocupado</option>
+                <div class="col-md-2">
+                    <label class="form-label">Estado</label>
+                    <select id="inputEstado" class="form-select">
                         <option value="Disponible">Disponible</option>
+                        <option value="Ocupado">Ocupado</option>
                     </select>
                 </div>
-                <div class="col-12 col-md-2">
-                    <label class="form-label small fw-bold text-secondary">Observaciones</label>
-                    <input type="text" id="inputObservaciones" class="form-control form-control-sm">
+                <div class="col-md-4">
+                    <label class="form-label">Observaciones</label>
+                    <input type="text" id="inputObservaciones" class="form-control">
                 </div>
             </form>
+
+            <!-- Barra de Botones visible siempre al pie -->
+            <div class="action-buttons d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary-custom" onclick="agregarRegistro()"><i class="bi bi-plus-lg"></i> Agregar</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="editarRegistro()"><i class="bi bi-pencil"></i> Editar</button>
+                    <button type="button" class="btn btn-warning text-white" onclick="liberarID()"><i class="bi bi-unlock"></i> Liberar ID</button>
+                    <button type="button" class="btn btn-danger" onclick="eliminarRegistro()"><i class="bi bi-trash"></i> Eliminar</button>
+                    <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()"><i class="bi bi-eraser"></i> Limpiar</button>
+                </div>
+                <small class="text-muted text-end" style="font-size: 0.75rem;">Guardado automático activado</small>
+            </div>
         </div>
 
-        <!-- Botones de Acción -->
-        <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4">
-            <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-sm btn-primary fw-bold" onclick="guardarRegistro()">💾 Guardar / Reasignar</button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="liberarRegistro()">🔓 Liberar ID</button>
-                <button class="btn btn-sm btn-danger fw-bold" onclick="eliminarRegistro()">🗑️ Eliminar</button>
-                <button class="btn btn-sm btn-light border" onclick="limpiarFormulario()">🧹 Limpiar Campos</button>
-            </div>
-            <span class="small text-muted fs-7">Guardado automático activo</span>
-        </div>
     </div>
 
-    <!-- Script de Integración Javascript -->
-    <script>
-        let registrosGlobales = [];
-        let idSeleccionado = null;
-
-        document.addEventListener("DOMContentLoaded", cargarDatos);
-
-        async function cargarDatos() {
-            const res = await fetch('/api/registros');
-            const data = await res.json();
-            registrosGlobales = data.registros;
-            
-            document.getElementById("countOcupados").innerText = data.stats.ocupados;
-            document.getElementById("countDisponibles").innerText = data.stats.disponibles;
-
-            renderTabla(registrosGlobales);
-        }
-
-        function renderTabla(lista) {
-            const tbody = document.getElementById("tablaBody");
-            tbody.innerHTML = "";
-            
-            lista.forEach(r => {
-                const tr = document.createElement("tr");
-                tr.style.cursor = "pointer";
-                tr.onclick = () => seleccionarFila(r, tr);
-
-                tr.innerHTML = `
-                    <td class="text-center fw-bold">${r.id || ''}</td>
-                    <td>${r.nombre || ''}</td>
-                    <td>${r.apellido || ''}</td>
-                    <td class="text-center"><span class="badge ${r.estado === 'Ocupado' ? 'bg-danger' : 'bg-success'}">${r.estado || ''}</span></td>
-                    <td>${r.observaciones || ''}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function seleccionarFila(r, tr) {
-            document.querySelectorAll("#tablaBody tr").forEach(row => row.classList.remove("table-active"));
-            tr.classList.add("table-active");
-
-            idSeleccionado = r.id;
-            document.getElementById("inputId").value = r.id || '';
-            document.getElementById("inputNombre").value = r.nombre || '';
-            document.getElementById("inputApellido").value = r.apellido || '';
-            document.getElementById("selectEstado").value = r.estado || 'Ocupado';
-            document.getElementById("inputObservaciones").value = r.observaciones || '';
-        }
-
-        async function guardarRegistro() {
-            const payload = {
-                id: document.getElementById("inputId").value.trim(),
-                nombre: document.getElementById("inputNombre").value.trim(),
-                apellido: document.getElementById("inputApellido").value.trim(),
-                estado: document.getElementById("selectEstado").value,
-                observaciones: document.getElementById("inputObservaciones").value.trim()
-            };
-
-            if (!payload.id) {
-                alert("Por favor ingresa un ID válido.");
-                return;
-            }
-
-            const res = await fetch('/api/guardar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const result = await res.json();
-            alert(result.message);
-            limpiarFormulario();
-            cargarDatos();
-        }
-
-        async function liberarRegistro() {
-            if (!idSeleccionado) {
-                alert("Selecciona un registro de la tabla primero.");
-                return;
-            }
-            if (confirm(`¿Deseas liberar el ID ${idSeleccionado}?`)) {
-                const res = await fetch(`/api/liberar/${idSeleccionado}`, { method: 'PUT' });
-                const result = await res.json();
-                alert(result.message);
-                limpiarFormulario();
-                cargarDatos();
-            }
-        }
-
-        async function eliminarRegistro() {
-            if (!idSeleccionado) {
-                alert("Selecciona un registro de la tabla primero.");
-                return;
-            }
-            if (confirm(`¿Estás seguro de eliminar permanentemente el ID ${idSeleccionado}?`)) {
-                const res = await fetch(`/api/eliminar/${idSeleccionado}`, { method: 'DELETE' });
-                const result = await res.json();
-                alert(result.message);
-                limpiarFormulario();
-                cargarDatos();
-            }
-        }
-
-        function limpiarFormulario() {
-            idSeleccionado = null;
-            document.getElementById("formColaborador").reset();
-            document.querySelectorAll("#tablaBody tr").forEach(row => row.classList.remove("table-active"));
-        }
-
-        function filtrarTabla() {
-            const query = document.getElementById("searchInput").value.toLowerCase();
-            const filtrados = registrosGlobales.filter(r => 
-                Object.values(r).some(val => String(val).toLowerCase().includes(query))
-            );
-            renderTabla(filtrados);
-        }
-    </script>
 </body>
 </html>
